@@ -35,7 +35,9 @@ jobs:
         git config --global user.name 'Charles CD Bot'
         git config --global user.email 'charlescdbot@users.noreply.github.com'
         git commit -sam "Automated chart update"
-        git push origin HEAD:master
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v2
 
     - name: Zup Settings
       run: |
