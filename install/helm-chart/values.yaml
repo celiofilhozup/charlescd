@@ -200,3 +200,6 @@ octopipe:
       value: "IN_CLUSTER"
     - name: TIMEOUT_RESOURCE_VERIFICATION
       value: "300"
+
+istio:
+  enabled: true
