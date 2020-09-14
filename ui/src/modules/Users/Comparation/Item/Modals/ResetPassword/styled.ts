@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-import {
-  Controller,
-  Get,
-  Param
-} from '@nestjs/common'
-import {
-  ReadModuleDto
-} from '../dto'
-import { ModulesService } from '../services'
+import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
 
-@Controller('modules')
-export class ModulesController {
-
-  constructor(private readonly modulesService: ModulesService) { }
-
-  @Get()
-  public async getModules(): Promise<ReadModuleDto[]> {
-    return await this.modulesService.getModules()
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    min-height: 150px;
+    width: 408px;
   }
 
-  @Get(':id')
-  public async getModuleById(@Param('id') id: string): Promise<ReadModuleDto> {
-    return await this.modulesService.getModuleById(id)
+  .modal-content {
+    overflow: unset;
+
+    > * {
+      margin-bottom: 15px;
+    }
   }
 
-}
+  strong {
+    color: ${({ theme }) => theme.text.light};
+  }
+`;
+
+export default {
+  Modal
+};

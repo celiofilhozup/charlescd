@@ -14,8 +14,24 @@
  * limitations under the License.
  */
 
-import { ModulesService } from './modules.service'
+import { MetricFilter } from './types';
 
-export {
-  ModulesService
-}
+export const conditionOptions = [
+  { value: 'EQUAL', label: 'Equal' },
+  { value: 'GREATER_THAN', label: 'Greater than' },
+  { value: 'LOWER_THAN', label: 'Lower than' }
+];
+
+export const operatorsOptions = [
+  { value: '=', label: 'Equal' },
+  { value: '!=', label: 'Different' },
+  { value: '!~', label: 'Regex' }
+];
+
+export const FILTER: MetricFilter = {
+  field: '',
+  operator: '',
+  value: ''
+};
+
+export const defaultFilterValues = [FILTER];
