@@ -331,7 +331,7 @@ jobs:
         sudo microk8s enable metallb:10.64.140.43-10.64.140.49 &&
         sudo snap install helm --classic &&
         sudo microk8s config > config &&
-        helm --kubeconfig config upgrade charlescd ./charlescd/install/helm-chart/ --install --wait --atomic --timeout 1800s --values=./charlescd/install/helm-chart/values.yaml
+        helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 1800s --values=./install/helm-chart/values.yaml
     
     # - name: Update charts
     #   run: |
