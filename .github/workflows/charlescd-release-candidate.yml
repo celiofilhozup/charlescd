@@ -333,7 +333,7 @@ jobs:
 
     - name: Integration tests
       id: integration_tests
-      uses: ./github/actions/integration-tests
+      uses: ./.github/actions/integration-tests
       with:
         token: ${{ secrets.INTEGRATION_REPO_TOKEN }}
         keys_store_result: ${{ secrets.INTEGRATION_BUCKET_KEYS }}
