@@ -33,6 +33,7 @@ runs:
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 1800s --values=./install/helm-chart/values.yaml &&
         cd .. &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
+        mkdir -p ~/.aws
         echo ${{ inputs.dot_env }} > ./charlescd-automation/.env &&
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.status.loadBalancer.ingress[0].ip}) &&
         echo "$EXTERNAL_IP charles.info.example" | sudo tee -a /etc/hosts &&
