@@ -44,14 +44,14 @@ runs:
         npm install &&
         cd ../ui &&
         npm install &&
-        npm run test
-        RESULT_A=$?
-        cd ../api
-        npm test
-        RESULT_B=$?
-        FINAL_RES=$(($RESULT_A+$RESULT_B))
-        cd ../../
-        aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/
-        aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
-        echo "::set-output name=result::$(echo $FINAL_RES)"
+        npm run test &&
+        RESULT_A=$? &&
+        cd ../api &&
+        npm test &&
+        RESULT_B=$? &&
+        FINAL_RES=$(($RESULT_A+$RESULT_B)) &&
+        cd ../../ &&
+        aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/ &&
+        aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/ &&
+        echo "::set-output name=result::$(echo $FINAL_RES)" &&
         exit $FINAL_RES
