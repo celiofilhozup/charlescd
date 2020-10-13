@@ -1,4 +1,5 @@
 name: 'Integration tests'
+description: 'Charles integration tests'
 inputs:
   token:
     description: 'token to clone integration tests repo'
