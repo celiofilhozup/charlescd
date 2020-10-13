@@ -29,12 +29,12 @@ runs:
         sudo microk8s enable metallb:10.64.140.43-10.64.140.49 &&
         sudo snap install helm --classic &&
         sudo microk8s config > config &&
+        mkdir -p ~/.aws
         echo "${{ inputs.keys_store_result }}" > ~/.aws/credentials &&
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 1800s --values=./install/helm-chart/values.yaml &&
         cd .. &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
-        mkdir -p ~/.aws
-        echo ${{ inputs.dot_env }} > ./charlescd-automation/.env &&
+        echo "${{ inputs.dot_env }}" > ./charlescd-automation/.env &&
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.status.loadBalancer.ingress[0].ip}) &&
         echo "$EXTERNAL_IP charles.info.example" | sudo tee -a /etc/hosts &&
         sudo apt-get install awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
