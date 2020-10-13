@@ -1,0 +1,55 @@
+name: 'Integration tests'
+inputs:
+  token:
+    description: 'token to clone integration tests repo'
+    required: true
+  keys_store_result:
+    description: 'keys to store results on bucket'
+    required: true
+  bucket_name:
+    description: 'bucket name to store results'
+    required: true
+  dot_env:
+    description: '.env file of integration tests'
+    required: true
+outputs:
+  result:
+    description: "Result status of execution tests"
+    value: ${{ steps.tests.outputs.result }}
+runs:
+  using: "composite"
+  steps: 
+    - id: tests
+      shell: bash
+      run: |
+        sudo apt update &&
+        sudo snap install microk8s --classic &&
+        sudo microk8s enable dns helm3 rbac storage &&
+        sudo microk8s enable metallb:10.64.140.43-10.64.140.49 &&
+        sudo snap install helm --classic &&
+        sudo microk8s config > config &&
+        echo ${{ inputs.keys_store_result }} > ~/.aws/credentials &&
+        helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 1800s --values=./install/helm-chart/values.yaml &&
+        cd .. &&
+        git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
+        echo ${{ inputs.dot_env }} > ./charlescd-automation/.env &&
+        EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.status.loadBalancer.ingress[0].ip}) &&
+        echo "$EXTERNAL_IP charles.info.example" | sudo tee -a /etc/hosts &&
+        sudo apt-get install awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
+        cd charlescd-automation/common &&
+        npm install &&
+        cd ../api &&
+        npm install &&
+        cd ../ui &&
+        npm install &&
+        npm run test
+        RESULT_A=$?
+        cd ../api
+        npm test
+        RESULT_B=$?
+        FINAL_RES=$(($RESULT_A+$RESULT_B))
+        cd ../../
+        aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/
+        aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
+        echo "::set-output name=result::$(echo $FINAL_RES)"
+        exit $FINAL_RES
