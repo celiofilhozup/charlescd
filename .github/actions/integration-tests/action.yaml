@@ -41,7 +41,7 @@ runs:
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 1800s --values=./install/helm-chart/values.yaml &&
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.status.loadBalancer.ingress[0].ip}) &&
         sudo microk8s.kubectl get svc nginx &&
-        echo "127.0.0.1 charles.info.example" | sudo tee -a /etc/hosts &&
+        echo "127.0.0.1 charles.info.example" | sudo tee -a /etc/hosts
         sudo microk8s.kubectl port-forward svc/nginx 80 &
         sleep 5
         curl -XGET http://charles.info.example
