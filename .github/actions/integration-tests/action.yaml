@@ -24,7 +24,7 @@ runs:
       shell: bash
       run: |
         sudo apt update &&
-        sudo apt-get install awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
+        sudo apt-get install curl awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
         sudo snap install microk8s --classic &&
         sudo microk8s enable dns helm3 rbac storage &&
         sudo microk8s enable metallb:10.64.140.43-10.64.140.49 &&
@@ -42,6 +42,7 @@ runs:
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.status.loadBalancer.ingress[0].ip}) &&
         sudo microk8s.kubectl get svc nginx &&
         echo "$EXTERNAL_IP charles.info.example" | sudo tee -a /etc/hosts &&
+        curl -XGET http://charles.info.example
         cd .. &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
         echo "${{ inputs.dot_env }}" > ./charlescd-automation/.env &&
