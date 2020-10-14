@@ -49,7 +49,7 @@ runs:
         cd ../api &&
         npm install &&
         cd ../ui &&
-        npm install &&
+        npm install
         npm run test
         RESULT_A=$?
         cd ../api
