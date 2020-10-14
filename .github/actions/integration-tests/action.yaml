@@ -50,10 +50,10 @@ runs:
         npm install &&
         cd ../ui &&
         npm install
-        npm run test;
+        npm -c run test;
         RESULT_A=$?
         cd ../api
-        npm test;
+        npm -c test;
         RESULT_B=$?
         FINAL_RES=$(($RESULT_A+$RESULT_B))
         cd ../../
