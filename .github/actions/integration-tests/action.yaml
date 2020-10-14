@@ -42,9 +42,9 @@ runs:
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.status.loadBalancer.ingress[0].ip}) &&
         sudo microk8s.kubectl get svc nginx &&
         echo "127.0.0.1 charles.info.example" | sudo tee -a /etc/hosts
-        sudo microk8s.kubectl port-forward svc/nginx 80 &
+        sudo microk8s.kubectl port-forward svc/nginx 8080 &
         sleep 5
-        curl -XGET http://charles.info.example
+        curl -XGET http://charles.info.example:8080
         cd .. &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
         echo "${{ inputs.dot_env }}" > ./charlescd-automation/.env &&
