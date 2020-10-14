@@ -50,7 +50,7 @@ runs:
         npm install &&
         cd ../ui &&
         npm install
-        npm run test ||
+        $(npm run test ||
         RESULT_A=$? ||
         cd ../api ||
         npm test ||
@@ -60,4 +60,4 @@ runs:
         aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/ ||
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/ ||
         echo "::set-output name=result::$(echo $FINAL_RES)" ||
-        exit $FINAL_RES
+        exit $FINAL_RES)
