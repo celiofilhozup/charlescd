@@ -42,11 +42,14 @@ runs:
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.spec.clusterIP}) &&
         sudo microk8s.kubectl get all -o wide &&
         wait_pods_ready &&
-        sudo microk8s.kubectl describe pod nginx
+        echo describe nginx pod &&
+        sudo microk8s.kubectl describe pod nginx 
+        echo logs deployment nginx
         sudo microk8s.kubectl logs -f deployment/nginx &
         PID=$!
         sleep 60
         sudo kill -9 $PID || true
+        echo starting integration-tests-pod
         sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c '
         mkdir -p ~/.aws &&
         echo "${{ inputs.keys_store_result }}" > ~/.aws/credentials &&
