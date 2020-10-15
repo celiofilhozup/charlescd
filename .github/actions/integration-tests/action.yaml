@@ -37,11 +37,12 @@ runs:
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 2400s --values=./install/helm-chart/values.yaml &&
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.spec.clusterIP}) &&
         sudo microk8s.kubectl get all -o wide &&
-        for i in $(seq 1 60);
+        for i in $(seq 1 30);
         do
           sudo microk8s.kubectl get pods || true
           sleep 2
         done
+        sudo microk8s.kubectl describe pod nginx &&
         sudo microk8s.kubectl logs -f deployment/nginx &
         PID=$!
         sleep 60
@@ -50,7 +51,6 @@ runs:
         mkdir -p ~/.aws &&
         echo "${{ inputs.keys_store_result }}" > ~/.aws/credentials &&
         apt update &&
-        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata &&
         DEBIAN_FRONTEND=noninteractive apt-get install curl awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
         echo "$EXTERNAL_IP charles.info.example" | tee -a /etc/hosts
         curl -XGET http://charles.info.example
