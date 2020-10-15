@@ -65,4 +65,9 @@ runs:
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
         echo "::set-output name=result::$(echo $FINAL_RES)"
         exit $FINAL_RES' &&
+        while sudo microk8s.kubectl get pods -A |grep -v -E '(Running|Completed)'|grep -iv Restarts;
+        do 
+          echo waiting for pods to be ready...;
+          sleep 2; 
+        done
         sudo microk8s.kubectl logs -f integration-tests-pod
