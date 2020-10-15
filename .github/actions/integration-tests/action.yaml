@@ -64,4 +64,5 @@ runs:
         aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
         echo "::set-output name=result::$(echo $FINAL_RES)"
-        exit $FINAL_RES'
+        exit $FINAL_RES' &&
+        sudo microk8s.kubectl logs -f integration-tests-pod
