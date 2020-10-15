@@ -23,8 +23,6 @@ runs:
     - id: tests
       shell: bash
       run: |
-        sudo apt update &&
-        sudo apt-get install curl awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
         sudo snap install microk8s --classic &&
         sudo microk8s enable dns helm3 rbac storage &&
         sudo microk8s enable metallb:192.168.0.11-192.168.0.15 &&
@@ -41,7 +39,10 @@ runs:
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 2400s --values=./install/helm-chart/values.yaml &&
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.spec.clusterIP}) &&
         sudo microk8s.kubectl get all -o wide &&
-        echo "$EXTERNAL_IP charles.info.example" | sudo tee -a /etc/hosts
+        sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c '
+        apt update &&
+        apt-get install curl awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
+        echo "$EXTERNAL_IP charles.info.example" | tee -a /etc/hosts
         curl -XGET http://charles.info.example
         cd .. &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
@@ -63,4 +64,4 @@ runs:
         aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
         echo "::set-output name=result::$(echo $FINAL_RES)"
-        exit $FINAL_RES
+        exit $FINAL_RES'
