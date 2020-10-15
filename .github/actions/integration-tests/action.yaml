@@ -38,27 +38,29 @@ runs:
         sudo snap install helm --classic &&
         wait_pods_ready &&
         sudo microk8s config > config &&
+        echo ########### INSTALLING CHARLES &&
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 2400s --values=./install/helm-chart/values.yaml &&
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.spec.clusterIP}) &&
         sudo microk8s.kubectl get all -o wide &&
         wait_pods_ready &&
-        echo describe nginx pod &&
-        sudo microk8s.kubectl describe pod nginx 
-        echo logs deployment nginx
+        echo ############## describe nginx pod &&
+        sudo microk8s.kubectl describe pod nginx &&
+        echo ############ logs deployment nginx
         sudo microk8s.kubectl logs -f deployment/nginx &
         PID=$!
-        sleep 60
+        sleep 10
+        echo ########### end logs nginx
         sudo kill -9 $PID || true
-        echo starting integration-tests-pod
-        sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c '
+        echo ########### starting integration-tests-pod
+        sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c "
         mkdir -p ~/.aws &&
-        echo "${{ inputs.keys_store_result }}" > ~/.aws/credentials &&
+        echo \"${{ inputs.keys_store_result }}\" > ~/.aws/credentials &&
         apt update &&
         DEBIAN_FRONTEND=noninteractive apt-get install curl awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y &&
-        echo "$EXTERNAL_IP charles.info.example" | tee -a /etc/hosts
-        curl -XGET http://charles.info.example
+        echo \"$EXTERNAL_IP charles.info.example\" | tee -a /etc/hosts &&
+        curl -XGET http://charles.info.example &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
-        echo "${{ inputs.dot_env }}" > ./charlescd-automation/.env &&
+        echo \"${{ inputs.dot_env }}\" > ./charlescd-automation/.env &&
         cd charlescd-automation/common &&
         npm install &&
         cd ../api &&
@@ -67,15 +69,14 @@ runs:
         npm install
         sudo cat /etc/hosts
         npm run test
-        RESULT_A=$?
         cd ../api
         npm test
-        RESULT_B=$?
-        FINAL_RES=$(($RESULT_A+$RESULT_B))
         cd ../../
         aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
-        echo "::set-output name=result::$(echo $FINAL_RES)"
-        exit $FINAL_RES' &&
-        wait_pods_ready
+        echo \"::set-output name=result::$(echo $FINAL_RES)\"
+        exit 0" &&
+        echo ################# waiting int pod ready
+        wait_pods_ready &&
+        echo ####### logs int pod
         sudo microk8s.kubectl logs -f integration-tests-pod
