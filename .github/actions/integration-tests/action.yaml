@@ -39,9 +39,9 @@ runs:
         mkdir -p ~/.aws
         echo "${{ inputs.keys_store_result }}" > ~/.aws/credentials &&
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 2400s --values=./install/helm-chart/values.yaml &&
-        EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.status.loadBalancer.ingress[0].ip}) &&
+        EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.spec.clusterIP}) &&
         sudo microk8s.kubectl get all -o wide &&
-        echo "127.0.0.1 charles.info.example" | sudo tee -a /etc/hosts
+        echo "$EXTERNAL_IP charles.info.example" | sudo tee -a /etc/hosts
         curl -XGET http://charles.info.example
         cd .. &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
