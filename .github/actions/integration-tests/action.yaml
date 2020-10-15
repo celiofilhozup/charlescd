@@ -39,13 +39,13 @@ runs:
         sudo microk8s.kubectl get all -o wide &&
         for i in $(seq 1 60);
         do
-          sudo microk8s.kubectl get pods
+          sudo microk8s.kubectl get pods || true
           sleep 2
         done
         sudo microk8s.kubectl logs -f deployment/nginx &
         PID=$!
         sleep 60
-        sudo kill -9 $PID
+        sudo kill -9 $PID || true
         sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c '
         mkdir -p ~/.aws &&
         echo "${{ inputs.keys_store_result }}" > ~/.aws/credentials &&
