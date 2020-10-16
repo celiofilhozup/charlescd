@@ -50,7 +50,6 @@ runs:
         apt-get -qq update > /dev/null &&
         DEBIAN_FRONTEND=noninteractive apt-get -qq install git curl awscli npm nodejs libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y > /dev/null &&
         echo \"$EXTERNAL_IP charles.info.example\" | tee -a /etc/hosts &&
-        curl -XGET http://charles.info.example &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
         echo \"${{ inputs.dot_env }}\" > ./charlescd-automation/.env &&
         cd charlescd-automation/common &&
