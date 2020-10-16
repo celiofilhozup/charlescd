@@ -71,8 +71,8 @@ runs:
         cd ../api
         npm test
         cd ../../
-        aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/
-        aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
+        aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/mochareports/${GITHUB_REF}/$(date +%F-%T)
+        aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/mochawesome-report/${GITHUB_REF}/$(date +%F-%T)
         exit 0" &&
         echo  waiting int pod ready
         wait_pods_ready &&
