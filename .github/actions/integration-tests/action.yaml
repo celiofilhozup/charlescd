@@ -43,8 +43,9 @@ runs:
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.spec.clusterIP}) &&
         sudo microk8s.kubectl get all -o wide &&
         wait_pods_ready &&
-        echo STARTING integration-tests-pod
-        sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c "
+        echo STARTING integration-tests
+        cd ..
+        # sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c "
         mkdir -p ~/.aws &&
         echo \"${{ inputs.keys_store_result }}\" > ~/.aws/credentials &&
         apt-get -qq update > /dev/null &&
@@ -64,8 +65,8 @@ runs:
         cd ../../
         aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/mochareports/${GITHUB_REF}/$(date +%F-%T)
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/mochawesome-report/${GITHUB_REF}/$(date +%F-%T)
-        exit 0" &&
-        echo  WAITING INTEGRATION POD READY
-        wait_pods_ready &&
-        echo  LOGS INTEGRATION POD STARTING...
-        sudo microk8s.kubectl logs -f integration-tests-pod
+        # exit 0" &&
+        # echo  WAITING INTEGRATION POD READY
+        # wait_pods_ready &&
+        # echo  LOGS INTEGRATION POD STARTING...
+        # sudo microk8s.kubectl logs -f integration-tests-pod
