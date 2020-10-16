@@ -38,20 +38,20 @@ runs:
         sudo snap install helm --classic &&
         wait_pods_ready &&
         sudo microk8s config > config &&
-        echo ########### INSTALLING CHARLES &&
+        echo INSTALLING CHARLES &&
         helm --kubeconfig config upgrade charlescd ./install/helm-chart/ --install --wait --atomic --timeout 2400s --values=./install/helm-chart/values.yaml &&
         EXTERNAL_IP=$(sudo microk8s.kubectl get svc nginx -o jsonpath={.spec.clusterIP}) &&
         sudo microk8s.kubectl get all -o wide &&
         wait_pods_ready &&
-        echo ############## describe nginx pod &&
+        echo  describe nginx pod &&
         sudo microk8s.kubectl describe pod nginx &&
-        echo ############ logs deployment nginx
+        echo  logs deployment nginx
         sudo microk8s.kubectl logs -f deployment/nginx &
         PID=$!
         sleep 10
-        echo ########### end logs nginx
+        echo  end logs nginx
         sudo kill -9 $PID || true
-        echo ########### starting integration-tests-pod
+        echo  starting integration-tests-pod
         sudo microk8s.kubectl run integration-tests-pod --image ubuntu --command --restart=Never -- bash -c "
         mkdir -p ~/.aws &&
         echo \"${{ inputs.keys_store_result }}\" > ~/.aws/credentials &&
@@ -76,7 +76,7 @@ runs:
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/
         echo \"::set-output name=result::$(echo $FINAL_RES)\"
         exit 0" &&
-        echo ################# waiting int pod ready
+        echo  waiting int pod ready
         wait_pods_ready &&
-        echo ####### logs int pod
+        echo  logs int pod
         sudo microk8s.kubectl logs -f integration-tests-pod
