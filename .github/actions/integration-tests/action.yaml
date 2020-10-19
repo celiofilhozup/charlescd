@@ -53,15 +53,18 @@ runs:
         echo "$EXTERNAL_IP charles.info.example" | sudo tee -a /etc/hosts &&
         git clone https://ZupIT:${{ inputs.token }}@github.com/ZupIT/charlescd-automation.git &&
         echo "${{ inputs.dot_env }}" > ./charlescd-automation/.env &&
+        cp ./charlescd-automation/.env ./charlescd-automation/ui/.env &&
+        cp ./charlescd-automation/.env ./charlescd-automation/api/.env &&
+        cp ./charlescd-automation/.env ./charlescd-automation/common/.env &&
         cd charlescd-automation/common &&
         npm install &&
         cd ../api &&
         npm install &&
         cd ../ui &&
         npm install
-        npm run test
+        npm run test || true
         cd ../api
-        npm test
+        npm test || true
         cd ../../
         aws s3 cp --recursive charlescd-automation/ui/cypress/mochareports s3://${{ inputs.bucket_name }}/mochareports/${GITHUB_REF}/$(date +%F-%T)
         aws s3 cp --recursive charlescd-automation/api/mochawesome-report s3://${{ inputs.bucket_name }}/mochawesome-report/${GITHUB_REF}/$(date +%F-%T)
