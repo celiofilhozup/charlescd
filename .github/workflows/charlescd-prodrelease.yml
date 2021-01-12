@@ -376,8 +376,15 @@ jobs:
     - name: DeployForTests
       uses: WyriHaximus/github-action-helm3@v1.0.0
       with:
-        exec: helm install charlescd ./install/helm-chart/ --wait --atomic --namespace=staging --values=./values-charles-staging.yaml
+        exec: helm install charlescdstg ./install/helm-chart/ --wait --atomic --namespace=staging --values=./values-charles-staging.yaml
         kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+
+    # - name: UndeployForTests
+    #   uses: WyriHaximus/github-action-helm3@v1.0.0
+    #   with:
+    #     exec: helm uninstall charlescdstg --namespace=staging
+    #     kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+
 
     # - name: Generate single file
     #   uses: WyriHaximus/github-action-helm3@v1.0.0
